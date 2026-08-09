@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greenpoint Reed</title>
+<style>
+:root {
+  --ebony: #1a1a1a;
+  --brass: #d4af37;
+  --cream: #fdfaf1;
+  --muted: #a8a29e;
+}
+body {
+  margin: 0; font-family: 'Georgia', serif;
+  background: var(--cream);
+  color: var(--ebony);
+  overflow-x: hidden;
+}
+#app {
+  max-width: 450px; margin: 0 auto; 
+  min-height: 100vh; position: relative; 
+  padding-bottom: 80px;
+}
+header {
+  padding: 2rem 1rem; text-align: center; border-bottom: 2px solid var(--ebony);
+}
+h1 {
+  font-size: 1.8rem; margin: 0; letter-spacing: -1px;
+  color: var(--ebony);
+}
+.tagline {
+  font-style: italic; color: var(--muted); font-size: 0.9rem;
+}
+.screen { display: none; padding: 1rem; animation: fadeIn 0.3s ease;
+}
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Radar View */
+.radar-controls {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+}
+.toggle-btn {
+  background: var(--ebony); color: var(--brass); border: 1px solid var(--brass);
+  padding: 8px 12px; cursor: pointer; font-family: inherit; font-weight: bold;
+}
+.listing-card {
+  background: white; border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem;
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; transition: 0.2s;
+}
+.listing-card.hot { border: 3px solid var(--brass); background: #fffdf0; }
+.price { font-weight: bold; color: var(--ebony); }
+
+/* Detail View */
+.instrument-img {
+  width: 100%; height: 300px; background: var(--ebony); 
+  display: flex; align-items: center; justify-content: center; color: var(--brass);
+  font-size: 3rem; margin-bottom: 1rem;
+}
+
+/* Nav */
+nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 450px; height: 60px; background: var(--ebony);
+  display: flex; justify-content: space-around; align-items: center;
+  border-top: 3px solid var(--brass);
+}
+nav a {
+  color: var(--cream); text-decoration: none; font-size: 0.8rem; text-transform: uppercase;
+}
+
+/* Notification */
+.alert-box {
+  background: var(--brass); color: var(--ebony); padding: 1rem; 
+  border-radius: 4px; margin-top: 2rem; font-weight: bold; text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header>
+    <h1>Greenpoint Reed</h1>
+    <div class="tagline">The hyper-local radar for the perfect clarinet.</div>
+  </header>
+
+  <div id="home" class="screen">
+    <div class="radar-controls">
+      <strong>Available in Greenpoint</strong>
+      <button class="toggle-btn" onclick="toggleHeatmap()">Price Heatmap</button>
+    </div>
+    <div id="listings">
+      <div class="listing-card" onclick="location.hash='#/s/1'">
+        <div><strong>Buffet Crampon</strong><br><small>0.2 miles away</small></div>
+        <div class="price">$1,200</div>
+      </div>
+      <div class="listing-card" onclick="location.hash='#/s/2'">
+        <div><strong>Vintage Selmer</strong><br><small>0.5 miles away</small></div>
+        <div class="price">$850</div>
+      </div>
+      <div class="listing-card" onclick="location.hash='#/s/3'">
+        <div><strong>Student Model</strong><br><small>0.1 miles away</small></div>
+        <div class="price">$300</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="detail" class="screen">
+    <div class="instrument-img">🎷</div>
+    <h2>Vintage Selmer Clarinet</h2>
+    <p>Excellent condition, polished ebony. Located near Manhattan Ave.</p>
+    <div class="price" style="font-size: 1.5rem">$850</div>
+    <button class="toggle-btn" style="width: 100%; margin-top: 1rem; padding: 15px;">Contact Seller</button>
+  </div>
+
+  <div id="alerts" class="screen">
+    <h3>Deal Alerts</h3>
+    <div class="alert-box">
+      🚨 NEW DEAL: Student Model found for $300 in Greenpoint! (2 mins ago)
+    </div>
+    <p style="text-align: center; color: var(--muted); margin-top: 2rem;">You are monitoring: Clarinet, Greenpoint, < $500</p>
+  </div>
+
+  <nav>
+    <a href="#/">Radar</a>
+    <a href="#/alerts">Alerts</a>
+  </nav>
+</div>
+
+<script>
+function router() {
+  const hash = location.hash || '#/';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  
+  if (hash === '#/') {
+    document.getElementById('home').classList.add('active');
+  } else if (hash === '#/alerts') {
+    document.getElementById('alerts').classList.add('active');
+  } else if (hash.startsWith('#/s/')) {
+    document.getElementById('detail').classList.add('active');
+  }
+}
+
+function toggleHeatmap() {
+  const cards = document.querySelectorAll('.listing-card');
+  cards.forEach(c => {
+    const price = parseInt(c.querySelector('.price').innerText.replace('$', '').replace(',', ''));
+    if (price < 500) c.classList.toggle('hot');
+  });
+}
+
+window.addEventListener('hashchange', router);
+window.addEventListener('load', router);
+</script>
+</body>
+</html>
